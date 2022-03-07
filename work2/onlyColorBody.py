@@ -19,10 +19,8 @@ from colorMoment import  getColorMoment
 import colorMix as CM
 import cnnVectors as CV
 import rawImages as RI
-from tensorflow import keras
 import os
 import matplotlib.pyplot as mp
-from tensorflow.keras.callbacks import  TensorBoard
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"#由于显卡不够好，这里用CPU
 
 imagesAndLabels = RI.getRawImagesAndLabels()#获取输入图片及其标签
@@ -60,54 +58,15 @@ colorVectorsForTrain = CM.joinStraightAndColor(colorStraightForTrain, colorMomen
 colorStraightForTest, colorMomentForTest = CM.empowerNormalizedImagesList(colorStraightForTest, colorMomentForTest, 1,28)#权值
 #将测试的赋权直方向量和测试的赋权颜色矩向量进行拼接
 colorVectorsForTest = CM.joinStraightAndColor(colorStraightForTest, colorMomentForTest)#获取颜色特征向量
+colorAndCnnForTrain =  colorVectorsForTrain
+colorAndCnnForTest =  colorVectorsForTest#获取融合拼接向量
 
-if(os.path.exists('the_save_modelVGG.h5')):
-    model  = keras.models.load_model('the_save_modelVGG.h5')
-else:
-    optimizer = optimizers.Adam(learning_rate=0.001)#设置学习率
-    model = CV.buildMyVGG()#获取卷积模型
-    model.compile(optimizer=optimizer, loss='mse', metrics=[tf.keras.metrics.CategoricalAccuracy()])
-    model.save('the_save_modelVGG.h5')
-#获取训练的卷积神经网络向量
-cnnVectorsForTrain = model.predict(rawImagesListForTrain)#这里记住输入的是（N，112，112,3）返回一个nX4096的矩阵
-#对训练的卷积神经网络向量归一化
-cnnVectorsForTrain = CM.normalizeColor(cnnVectorsForTrain)#对卷积向量进行归一化
 
-#获取测试的卷积神经网络向量
-cnnVectorsForTest = model.predict(rawImagesListForTest)
-#对测试的卷积神经网络向量归一化
-cnnVectorsForTest = CM.normalizeColor(cnnVectorsForTest)
 
-'''
-    根据专利，
-       对归一化之后的卷积向量和 颜色特征向量 分别赋权，再将颜色特征向量拼接到卷积向量里面
-'''
+optimizer2 = optimizers.Adam(learning_rate=0.001)#设置学习率
+model2 = CV.buildFullConnect3()
+model2.compile(optimizer=optimizer2, loss="mse", metrics=[tf.keras.metrics.CategoricalAccuracy()])
 
-#对训练的归一化的神经网络向量和训练的归一化的颜色矩向量进行赋权值
-colorVectorsForTrain, cnnVectorsForTrain = CM.empowerNormalizedImagesList(colorVectorsForTrain, cnnVectorsForTrain, 2, 1)#2 1
-#对训练的赋权神经网络向量和训练的赋权颜色矩向量进行拼接得到训练的融合拼接向量
-colorAndCnnForTrain = CM.joinStraightAndColor(cnnVectorsForTrain, colorVectorsForTrain)
-#训练的融合拼接向量进行归一化，最终得到融合特征向量
-colorAndCnnForTrain = CM.normalizeColor(colorAndCnnForTrain)
-
-#下面同上，获取的是测试用的融合特征向量
-colorVectorsForTest, cnnVectorsForTest = CM.empowerNormalizedImagesList(colorVectorsForTest, cnnVectorsForTest,2, 1)#赋权
-colorAndCnnForTest = CM.joinStraightAndColor(cnnVectorsForTest, colorVectorsForTest)#获取融合拼接向量
-colorAndCnnForTest= CM.normalizeColor(colorAndCnnForTest)#再次归一化
-
-if(os.path.exists('the_save_modelFull.h5')):
-    model2 = keras.models.load_model('the_save_modelFull.h5')
-else:
-    optimizer2 = optimizers.Adam(learning_rate=0.001)#设置学习率
-    model2 = CV.buildFullConnect()
-    # model2.compile(optimizer=optimizer2, loss=losses.CategoricalCrossentropy(from_logits=True), metrics=[tf.keras.metrics.CategoricalAccuracy()])
-    model2.compile(optimizer=optimizer2, loss="mse", metrics=[tf.keras.metrics.CategoricalAccuracy()])
-    model2.save('the_save_modelFull.h5')
-'''
-    输入的数含有nan
-    过大导致NAN？
-    过小
-'''
 
 
 
@@ -117,21 +76,15 @@ ds_test = tf.data.Dataset.from_tensor_slices((colorAndCnnForTest,testY_list))
 ds_train = ds_train.shuffle(100).batch(32).repeat(1)
 ds_test = ds_test.shuffle(100).batch(32).repeat(1)
 
-# TensorBoard = TensorBoard(log_dir="../model3", histogram_freq=1, write_grads=True)
 history = model2.fit(ds_train, validation_data=ds_test, epochs=300)
-'''
-loss
-categorical_accuracy
-val_loss
-val_categorical_accuracy
-'''
+
 mp.subplot(2,1,1)
 mp.plot(history.history['categorical_accuracy'],linewidth="1",color="blue",label="categorical_accuracy")
 mp.plot(history.history['val_categorical_accuracy'],linewidth="1",color="black",label="val_categorical_accuracy")
 mp.legend()
 ax = mp.gca()
 ax.grid(axis="both",color="orangered",linewidth=0.75)
-mp.title("StraightWeight:394-Accuracy,Epoch=300")
+mp.title("OnlyColor-Accuracy,Epoch=300")
 
 
 mp.subplot(2,1,2)
@@ -139,7 +92,7 @@ mp.plot(history.history['loss'],linewidth="1",color="blue",label="loss")
 mp.plot(history.history['val_loss'],linewidth="1",color="black",label="val_loss")
 ax = mp.gca()
 ax.grid(axis="both",color="orangered",linewidth=0.75)
-mp.title("StraightWeight:394-Loss,Epoch=300")
+mp.title("OnlyColor-Loss,Epoch=300")
 mp.legend()
 mp.show()
 

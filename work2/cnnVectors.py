@@ -44,3 +44,19 @@ def buildFullConnect():#全连接层
      return model
 
 
+def buildFullConnect2():#只有直方向量的时候
+
+    input_shape = [4096]
+    model = tf.keras.Sequential()
+    model.add(layers.Dense(256, activation=tf.nn.relu, input_shape=input_shape))
+    model.add(layers.Dense(128, activation=tf.nn.relu))
+    model.add(layers.Dense(3, activation=tf.nn.softmax))  # 最后的结果为三个
+    return model
+
+def buildFullConnect3():#只有颜色矩的时候
+    input_shape = [267]
+    model = tf.keras.Sequential()
+    model.add(layers.Dense(256, activation=tf.nn.relu, input_shape=input_shape))
+    model.add(layers.Dense(128, activation=tf.nn.relu))
+    model.add(layers.Dense(3, activation=tf.nn.softmax))  # 最后的结果为三个
+    return model
