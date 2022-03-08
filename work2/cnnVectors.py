@@ -60,3 +60,26 @@ def buildFullConnect3():#只有颜色矩的时候
     model.add(layers.Dense(128, activation=tf.nn.relu))
     model.add(layers.Dense(3, activation=tf.nn.softmax))  # 最后的结果为三个
     return model
+
+def buildAlexNet():
+    input_shape = [112,112,3]
+    model = tf.keras.Sequential()
+    model.add(layers.Conv2D(filters=96, kernel_size=[11,11], strides=(4,4),padding="valid", activation=tf.nn.relu, input_shape=input_shape))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2), padding="valid", name="maxpool_1_3x3_1"))
+    model.add(layers.Conv2D(256, kernel_size=[5,5], strides=(1,1),padding="same", activation=tf.nn.relu))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2), padding="valid", name="maxpool_1_3x3_2"))
+    model.add(layers.Conv2D(384, kernel_size=[3,3], strides=(1,1),padding="same", activation=tf.nn.relu))
+    model.add(layers.Conv2D(384, kernel_size=[3,3], strides=(1,1),padding="same", activation=tf.nn.relu))
+    model.add(layers.Conv2D(256, kernel_size=[3,3], strides=(1,1),padding="same", activation=tf.nn.relu))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=(1, 1), padding="valid", name="maxpool_1_3x3_3"))
+    model.add(layers.Flatten())
+    return model #1024个
+
+
+def buildAlexNetFullConnect():
+    input_shape = [1291]
+    model = tf.keras.Sequential()
+    model.add(layers.Dense(4096, activation=tf.nn.relu, input_shape=input_shape))
+    model.add(layers.Dense(4096, activation=tf.nn.relu))
+    model.add(layers.Dense(3, activation=tf.nn.softmax))  # 最后的结果为三个
+    return model
