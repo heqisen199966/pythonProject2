@@ -30,6 +30,7 @@ def getColorStraight(rawImagesList):
                 totoalZero = 0
                 majorImagesListCmpWithZero = tf.math.equal(majorImagesList, 0)  # 看看每个数是否为0,真的为T
                 out = tf.cast(majorImagesListCmpWithZero, dtype=tf.float32)  # True的时候会变为1，False的时候会变为0
+
                 # 统计0的个数
                 '''
                     下面两行代码意思: 上面的out是一个shape为(3600,112,112)3600张图片，宽高112X112，
@@ -38,8 +39,8 @@ def getColorStraight(rawImagesList):
                     再将其添加到tempListForRGB
                     而最后picsStraightR/G/B 先得到的是 86X3600的矩阵,可以之后再转置
                 '''
-                totoalZero = tf.reduce_sum(out, axis=1)
-                totoalZero = tf.reduce_sum(totoalZero, axis=1)
+                totoalZero = tf.reduce_sum(out, axis = 1)
+                totoalZero = tf.reduce_sum(totoalZero, axis = 1)
 
                 picsStraightRGBList[i].append(totoalZero)  # 将0的个数放到列表的第一个位置
 

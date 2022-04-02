@@ -35,7 +35,7 @@ def normalizeColor(ImagesList):
          那么这里将sumImagesList原本shape为(3600,) 转为 (1,3600) 再转为 (3600,1)
          然后令 ImagesList /sumImagesList 就能够一次性计算，不用循环拿出来
     '''
-    sumImagesList =tf.expand_dims(sumImagesList,axis=0)#最前面插入一个维度，shape为(3600,) 转为 (1,3600)
+    sumImagesList =tf.expand_dims(sumImagesList,axis = 0)#最前面插入一个维度，shape为(3600,) 转为 (1,3600)
     sumImagesList = tf.transpose(sumImagesList)#转置(1,3600) 再转为 (3600,1)
     normalizeImagesList = ImagesList/sumImagesList
     return normalizeImagesList
@@ -51,7 +51,7 @@ def empowerNormalizedImagesList(straight,color,valueForStraight,valueForColor):
 
 def joinStraightAndColor(straight,color):
     #最后一个步骤，将颜色矩拼接到直方向量后面
-    result = tf.concat([straight,color],axis=1)
+    result = tf.concat([straight,color],axis = 1)
     return result
 
 

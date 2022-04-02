@@ -99,7 +99,6 @@ mp.show()
 
 
 
-# model2.fit(colorAndCnnForTrain, trianY_list, validation_data=(colorAndCnnForTest, colorAndCnnForTest), epochs=20)
 
 
 

@@ -35,17 +35,11 @@ testY_list  = tf.one_hot(testY_list ,depth = 3)#将测试标签变为独热码
 rawImagesListForTrain = trainX_images[:, 56:168, 56:168, :] #获取训练用的主要部分图像
 rawImagesListForTest =  testX_images[:, 56:168, 56:168, :] #获取测试用的主要部分图像
 
-
-
-
-
 optimizer = optimizers.Adam(learning_rate=0.001)#设置学习率
 model = CV.buildMyVGG()#获取卷积模型
 model.compile(optimizer=optimizer, loss='mse', metrics=[tf.keras.metrics.CategoricalAccuracy()])
 #获取训练的卷积神经网络向量
 cnnVectorsForTrain = model.predict(rawImagesListForTrain)
-
-
 #获取测试的卷积神经网络向量
 cnnVectorsForTest = model.predict(rawImagesListForTest)
 

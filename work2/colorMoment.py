@@ -34,9 +34,11 @@ def getColorMoment(rawImagesList):
 
         #获取中心图片
         majorImagesList = rawImagesList[:, 56:168, 56:168, i]
+
         majorImagesList = tf.cast(majorImagesList,"float32")#为下面计算做准备
 
-        totalPixels = 224
+        # totalPixels = 12544
+        totalPixels = 50176
         '''
         根据专利，一阶矩 = 当前通道中(R/G/B)的像素值和 除以 像素个数总和
         出现负数，导致后面卷积出现错误，专利没提到怎么解决负数，
@@ -69,7 +71,7 @@ def getColorMoment(rawImagesList):
            #现在能想到的办法是,依次拿出每个矩阵再和其对应的一阶矩值OneMoment相减
             differenceSquareMatrix.append(majorImagesList[y]-oneMoment[y])#矩阵和其对应的一阶矩值是对齐的，打乱就不能这样了
         differenceSquareMatrix = tf.convert_to_tensor(differenceSquareMatrix)#转为张量
-        differenceSquareMatrix =  tf.pow(differenceSquareMatrix+1e-8,2)
+        differenceSquareMatrix = tf.pow(differenceSquareMatrix+1e-8,2)
         #统计像素值
         pixelValuesSum = tf.reduce_sum(differenceSquareMatrix, axis=1)
         pixelValuesSum = tf.reduce_sum(pixelValuesSum, axis=1)
