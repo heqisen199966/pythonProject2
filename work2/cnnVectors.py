@@ -6,7 +6,7 @@ from tensorflow.keras import layers
 
 
 
-def buildMyVGG():#9层,为了凑4096个特征，乱调.。。。
+def buildMyVGG():#7层,为了凑4096个特征，
 
     input_shape = [112, 112, 3]
 
@@ -19,31 +19,61 @@ def buildMyVGG():#9层,为了凑4096个特征，乱调.。。。
     model.add(layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
-
+    # model.add(layers.Dropout(rate=0.5))
+    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
 
-    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
-    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+    # model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
     model.add(layers.MaxPool2D(pool_size=[2,2], strides=2, padding='same'))
-    model.add(layers.Dropout(rate=0.5))
+    # model.add(layers.Dropout(rate=0.5))
 
-    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
-
-    # model.add(layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
-    # model.add(layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
-    # model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    # model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+    #
+    #
     model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
     model.add(layers.Flatten())  # 拉直
     return model
 
+# model = buildMyVGG();
+# model.build()
+# print(model.summary())
+
+def buildVGG4():
+    input_shape = [112, 112, 3]
+    model = tf.keras.Sequential()
+    model.add(layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu, input_shape=input_shape))
+    # model.add(layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+
+    model.add(layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+    model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    model.add(layers.Dropout(rate=0.7))
+    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+    model.add(layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu))
+    model.add(layers.Dropout(rate=0.5))
+    model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    model.add(layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'))
+    model.add(layers.Flatten())
+    return model
+
+
+
+
+# model = buildVGGFull();
+# model.build()
+# print(model.summary())
+
+
 def buildFullConnect():#全连接层
      input_shape = [4363]#注意最后放进全连接层有4363个特征，这是根据之前构建的模型得来的
      model = tf.keras.Sequential()
-     model.add(layers.Dense(256, activation=tf.nn.relu,input_shape=input_shape))
-     model.add(layers.Dropout(rate=0.5))
-     model.add(layers.Dense(128, activation=tf.nn.relu))
+     model.add(layers.Dense(512, activation=tf.nn.relu,input_shape=input_shape))
+     model.add(layers.Dropout(rate = 0.4))
+     model.add(layers.Dense(256, activation=tf.nn.relu))
+     # model.add(layers.Dropout(rate=0.5))
      model.add(layers.Dense(3,activation=tf.nn.softmax))#最后的结果为三个
      return model
 
@@ -77,6 +107,8 @@ def buildFullConnect4():#仅卷积
     model.add(layers.Dense(3, activation=tf.nn.softmax))  # 最后的结果为三个
     return model
 
+
+
 def buildAlexNet():
     input_shape = [112,112,3]
     model = tf.keras.Sequential()
@@ -85,7 +117,7 @@ def buildAlexNet():
     model.add(layers.Conv2D(256, kernel_size=[5,5], strides=(1,1),padding="same", activation = tf.nn.relu))
     model.add(layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2), padding="valid", name="maxpool_1_3x3_2"))
     model.add(layers.Conv2D(384, kernel_size=[3,3], strides=(1,1),padding="same", activation = tf.nn.relu))
-    model.add(layers.Dropout(rate=0.5))
+    model.add(layers.Dropout(rate=0.6))
     model.add(layers.Conv2D(384, kernel_size=[3,3], strides=(1,1),padding="same", activation = tf.nn.relu))
     model.add(layers.Conv2D(256, kernel_size=[3,3], strides=(1,1),padding="same", activation = tf.nn.relu))
     model.add(layers.MaxPool2D(pool_size = (3, 3), strides = (1, 1), padding="valid", name = "maxpool_1_3x3_3"))
@@ -97,7 +129,7 @@ def buildAlexNetFullConnect():
     input_shape = [2571]
     model = tf.keras.Sequential()
     model.add(layers.Dense(256, activation=tf.nn.relu, input_shape=input_shape))
-    model.add(layers.Dropout(rate=0.3))
+    model.add(layers.Dropout(rate=0.4))
     # model.add(layers.Dense(4096, activation=tf.nn.relu, input_shape=input_shape))
     model.add(layers.Dense(128, activation=tf.nn.relu))
     # model.add(layers.Dense(4096, activation=tf.nn.relu))

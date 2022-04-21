@@ -18,7 +18,7 @@ from colorStraight import  getColorStraight
 from colorMoment import  getColorMoment
 import colorMix as CM
 import cnnVectors as CV
-import rawImages as RI
+import rawImages2 as RI #这里改了
 from tensorflow import keras
 import os
 import matplotlib.pyplot as mp
@@ -64,7 +64,7 @@ colorVectorsForTest = CM.joinStraightAndColor(colorStraightForTest, colorMomentF
 
 
 optimizer = optimizers.Adam(learning_rate = 0.001)#设置学习率
-model = CV.buildMyVGG()#获取卷积模型
+model = CV.buildMyVGG();
 
 
 model.compile(optimizer = optimizer, loss = 'categorical_crossentropy', metrics = ['categorical_crossentropy','categorical_accuracy'])
@@ -136,16 +136,9 @@ mp.plot(history.history['val_categorical_accuracy'],linewidth = "1",color = "bla
 mp.legend()
 ax = mp.gca()
 ax.grid(axis="both",color="orangered",linewidth=0.75)
-mp.title("OriginalSize-Accuracy,Epoch=400")
+mp.title("Original-Accuracy,Epoch=400")
 
 
-# mp.subplot(3,1,2)
-# mp.plot(history.history['loss'],linewidth="1",color="blue",label="loss")
-# mp.plot(history.history['val_loss'],linewidth="1",color="black",label="val_loss")
-# ax = mp.gca()
-# ax.grid(axis="both",color="orangered",linewidth = 0.75)
-# mp.title("OriginalSize-Loss,Epoch =  400")
-# mp.legend()
 
 
 mp.subplot(2,1,2)
@@ -153,7 +146,7 @@ mp.plot(history.history['categorical_crossentropy'],linewidth="1",color="blue",l
 mp.plot(history.history['val_categorical_crossentropy'],linewidth="1",color="black",label="val_categorical_crossentropy")
 ax = mp.gca()
 ax.grid(axis="both",color="orangered",linewidth = 0.75)
-mp.title("OriginalSize-categorical_crossentropy,Epoch=400")
+mp.title("Original-categorical_crossentropy,Epoch=400")
 mp.legend()
 mp.show()
 
